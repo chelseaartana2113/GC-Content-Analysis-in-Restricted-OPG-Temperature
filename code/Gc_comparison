@@ -1,0 +1,185 @@
+import pandas as pd
+import plotly.express as px
+import dataframe_image as dfi
+organisms = {'Escherichia coli':'genome/escherichia_coli_genome.txt', 'Agrobacterium tumefaciens':
+        'genome/agrobacterium_tumefaciens_genome.fna','Alteromonas macleodii':
+        'genome/altremonas_macleodii_genome.fna','Bacillus subtilis':
+        'genome/bacillus_subtilis_genome.fna','Burkholderia cepacia':
+        'genome/burkholderia_cepacia_genome.fna','Flavobacterium johnsoniae':
+        'genome/flavobacterium_johnsoniae_genome.fna','Haemophilus influenzae':
+        'genome/haemophilus_influenza_genome.fna', 'Klebsiella pneumoniae':
+        'genome/klebsiella_pneumoniae_genome.fna','Lactobacillus acidophilus':
+        'genome/lactobacillus_acidophilus_genome.fna', 'Micrococcus luteus':
+        'genome/micrococcus_luteus_genome.fna','Mycobacterium tuberculosis':
+        'genome/mycobacterium_tuberculosis_genome.fna','Neisseria gonorrhoeae':
+        'genome/neisseria_gonorrhoeae_genome.fna','Pseudomonas fluorescens':
+        'genome/pseudomonas_fluorescens_genome.fna','Rhizobium leguminosarum':
+        'genome/rhizobium_leguminosarum_genome.fna','Salmonella enterica':
+        'genome/salmonella_enterica_genome.fna','Shewanella oneidensis':
+        'genome/shewanella_oneidensis_genome.fna','Sphingomonas paucimobilis':
+        'genome/sphingomona_paucimobilis_genome.fna','Streptococcus pyogenes':
+        'genome/streptococcus_pyogenes_genome.fna','Streptomyces coelicolor':
+        'genome/streptomyces_coelicolor_genome.fna','Vibrio cholerae':
+        'genome/vibrio_cholerae_genome.fna','Aquifex aeolicus':
+        'genome/aquifex_aeolicus_genome.fna','Deferribacter desulfuricans':
+        'genome/deferribacter_desulfuricans_genome.fna','Geobacillus stearothermophilus':
+        'genome/geobacilius_stearothermophilus_genome.fna','Thermotoga maritima':
+        'genome/thermotaga_maritima_genome.fna','Thermus aquaticus':
+        'genome/thermus_aquaticus_genome.fna','Allomeiothermus silvanus':
+        'genome/allomeiothermus_silvanus_genome.fna','Aquifex pyrophilus':
+        'genome/aquifex_pyrophilus_genome.fna','Caminibacter mediatlanticus':
+        'genome/caminibacter_mediatlanticus_genome.fna','Desulfotomaculum nigrificans':
+        'genome/desulfotomaculum_nigrificans_genome.fna','Hydrogenivirga caldilitoris':
+        'genome/hydrogenivirga_caldilitoris_genome.fna','Hydrogenobacter thermophilus':
+        'genome/hydrogenobacter_thermophilus_genome.fna','Meiothermus ruber':
+        'genome/meiothermus_ruber_genome.fna','Persephonella marina':
+        'genome/persephonella_marina_genome.fna','Sulfurihydrogenibium yellowstonense':
+        'genome/sulfuhydrogenibium_yellowstonese_genome.fna','Thermoactinomyces intermedius':
+        'genome/thermoactinomyces_intermedius_genome.fna','Thermoanaerobacter ethanolicus':
+        'genome/thermoanaerobacter_ethanolicus_genome.fna','Thermocrinis ruber':
+        'genome/thermocrinis_ruber_genome.fna','Thermodesulfobacterium commune':
+        'genome/thermodesulfobacterium_commune_genome.fna','Thermotoga neapolitana':
+        'genome/thermotoga_neapolitana_genome.fna','Thermus scotoductus':
+        'genome/thermus_scotoductus_genome.fna'}
+results=[]
+for name,file in organisms.items():
+    genome_lines = []
+    with open(file) as f:
+        for line in f:
+            if not line.startswith(">"):
+                genome_lines.append(line.strip().upper())
+    genome = ''.join(genome_lines)
+    print(f'Organism analyzed:',name)
+    A_count=genome.count('A')
+    T_count=genome.count('T')
+    G_count=genome.count('G')
+    C_count=genome.count('C')
+    total=A_count+T_count+C_count+G_count
+    print('Total bases analyzed:',total)
+    GC_content=round((G_count+C_count)/(total),3)
+    A=round((A_count/total),3)
+    T=round((T_count/total),3)
+    G=round((G_count/total),3)
+    C=round((C_count/total),3)
+    print(f"""Nucleotide frequency:
+    A: {A}
+    T: {T}
+    G: {G}
+    C: {C}""")
+    results.append({'Organism':name,'Genome length':total,
+                    'GC Content':GC_content,
+                    'Frequency of Adenine':A,
+                    'Frequency of Thymine':T,
+                    'Frequency of Guanine':G,
+                    'Frequency of Cytosine':C
+                    })
+with open("results.txt", "w") as out:
+    for r in results:
+        out.write(str(r) + "\n")
+
+df=pd.DataFrame(results)
+df['Type']=['Mesophilic','Mesophilic','Mesophilic','Mesophilic','Mesophilic','Mesophilic','Mesophilic',
+            'Mesophilic','Mesophilic','Mesophilic','Mesophilic','Mesophilic','Mesophilic','Mesophilic',
+            'Mesophilic','Mesophilic','Mesophilic','Mesophilic','Mesophilic','Mesophilic',
+            'Thermophilic','Thermophilic','Thermophilic','Thermophilic','Thermophilic','Thermophilic',
+            'Thermophilic','Thermophilic','Thermophilic','Thermophilic','Thermophilic','Thermophilic',
+            'Thermophilic','Thermophilic','Thermophilic','Thermophilic','Thermophilic','Thermophilic',
+            'Thermophilic','Thermophilic']
+df['Optimal growth temperature (in Celsius)']=[37,28,22,37,35,25,37,37,37,30,37,37,28,28,37,33,30,37,30,35,
+                                               85,62,62,80,70,55,85,55,58,75,73,60,73,70,50,70,80,70,77,65]
+df['Gram type']=['Negative','Negative','Negative','Positive','Negative','Negative','Negative','Negative',
+                 'Negative','Positive','Positive','Negative','Negative','Negative','Negative','Negative',
+                 'Negative','Positive','Positive','Negative',
+                 'Negative','Negative','Positive','Negative','Negative','Negative','Negative','Negative',
+                 'Positive','Negative','Negative','Negative','Negative','Negative','Positive','Positive',
+                 'Negative','Negative','Negative','Negative'
+                 ]
+
+
+from scipy.stats import ttest_ind
+
+meso_gc=df[df['Type']=='Mesophilic']['GC Content']
+thermo_gc=df[df['Type']=='Thermophilic']['GC Content']
+t_stat, p_value=ttest_ind(meso_gc,thermo_gc)
+
+print('T-test statistic:',t_stat)
+print('T-test p-value:',p_value)
+
+
+from scipy.stats import pearsonr
+corr, p_value_pear=pearsonr(
+    df['Optimal growth temperature (in Celsius)'],
+    df['GC Content']
+)
+
+print('Correlation(r):',corr)
+print('p-value',p_value_pear)
+
+fig = px.scatter(df, x="Optimal growth temperature (in Celsius)", 
+                 y="GC Content", color="Type", hover_name="Organism",
+                 title='Correlation Between Optimal Growth Temperature and GC Content Across 40 Species')
+fig.update_layout(
+    template="simple_white",
+    font=dict(size=14),
+    title_x=0.5
+)
+
+fig.show()
+
+fig.write_image("gc_vs_temperature.png", width=1000, height=600, scale=3)
+fig.write_html("gc_vs_temperature.html")
+
+df_avg= df.groupby('Type')[[
+    'Frequency of Adenine',
+    'Frequency of Thymine',
+    'Frequency of Guanine',
+    'Frequency of Cytosine',
+]].mean().reset_index()
+
+fig1=px.bar(df_avg,
+            x='Type',
+            y=['Frequency of Adenine',
+                'Frequency of Thymine',
+                'Frequency of Guanine',
+                'Frequency of Cytosine'],
+            barmode='group',
+            title='Average Nucleotide Frequency by Organism Type',
+            color_discrete_sequence=px.colors.qualitative.Pastel1
+            )
+
+fig1.show()
+fig1.write_image("average_nucleotide.png", width=1000, height=800, scale=3)
+fig1.write_html("average_nucleotide.html")
+
+fig2=px.bar(df,
+            x='GC Content',
+            y='Organism',
+            color='Type',
+            orientation='h')
+
+fig2.update_layout(
+    template="simple_white",
+    font=dict(size=13),
+    title_x=0.5,
+    title='GC Content Comparison Across Organism',
+)
+
+fig2.show()
+
+# EXPORT
+fig2.write_image("gc_content_distribution.png", width=1000, height=800, scale=3)
+fig2.write_html("gc_content_distribution.html")
+
+def color_gram(val):
+    return "color: green" if val == "Positive" else "color: red"
+
+styled = (
+    df.style
+    .background_gradient(subset=["Optimal growth temperature (in Celsius)"], cmap="coolwarm")
+    .map(color_gram, subset=["Gram type"])
+    .set_properties(**{"text-align": "center"})
+    .hide(axis="index")
+)
+
+
+dfi.export(styled, "table.png")
